@@ -1,0 +1,40 @@
+{
+  "name": "sentinel-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sentinel Scout — Counter‑Trafficking Lead Triage Agent (Node 22 + OpenAI Agents SDK)",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "nodemon --watch . --ext js,json --signal SIGTERM server.js",
+    "start": "node server.js",
+    "start:cli": "node src/cli.js",
+    "check": "node -e \"import('./src/healthcheck.js').then(m=>m.default?.()).catch(e=>{console.error(e);process.exit(1);})\"",
+    "clean": "rimraf dist .cache .tmp",
+    "format": "prettier -w .",
+    "lint": "eslint . --ext .js,.mjs,.cjs",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@openai/agents": "^0.0.7",
+    "@openai/agents-openai": "^0.0.7",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "pdfkit": "^0.15.0",
+    "puppeteer": "^24.16.2",
+    "sha.js": "^2.4.11",
+    "sharp": "^0.34.3",
+    "tesseract.js": "^5.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "eslint": "^9.9.0",
+    "husky": "^9.1.4",
+    "nodemon": "^3.1.4",
+    "prettier": "^3.3.3",
+    "rimraf": "^5.0.7"
+  }
+}
