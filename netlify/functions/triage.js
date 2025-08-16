@@ -1,12 +1,13 @@
-// CommonJS wrapper that loads your ESM agent via file URL (.mjs)
+// netlify/functions/triage.js  (CJS wrapper that loads ESM agent via file URL)
 const { Buffer } = require('node:buffer');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 async function loadAgent() {
+  // Import the built .mjs so Node treats it as ESM even inside CJS
   const modPath = path.resolve(__dirname, '../../dist/src/agents/sentinel.agent.mjs');
   const fileUrl = pathToFileURL(modPath);
-  return await import(fileUrl.href); // this will be treated as ESM
+  return await import(fileUrl.href);
 }
 
 module.exports.handler = async (event) => {
@@ -33,7 +34,6 @@ module.exports.handler = async (event) => {
 
     const { runTriage } = await loadAgent();
     const brief = await runTriage({ tip_text, urls, images, geo_hint, lang_hint, sensitivity });
-
     return json({ ok: true, brief });
   } catch (err) {
     console.error('[netlify:triage:error]', err);
@@ -41,7 +41,7 @@ module.exports.handler = async (event) => {
   }
 };
 
-// --- helpers ---
+// --- helpers (CORS + JSON) ---
 function headers(extra = {}) {
   return {
     'Content-Type': 'application/json',

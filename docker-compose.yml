@@ -1,0 +1,20 @@
+version: "3.9"
+services:
+  sentinel-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sentinel-agent:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # required
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      # optional tuning
+      NODE_ENV: production
+      PORT: 8080
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+      PUPPETEER_DISABLED: "0"
+    # If you want live-reload dev: mount code and run a dev command instead
+    # volumes:
+    #   - .:/app
