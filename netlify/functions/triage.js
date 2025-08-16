@@ -1,13 +1,17 @@
-// netlify/functions/triage.js
-import { Buffer } from 'node:buffer';
-import { runTriage } from '../../dist/src/agents/sentinel.agent.js';
+// netlify/functions/triage.js (CommonJS wrapper + dynamic import of ESM)
+const { Buffer } = require('node:buffer');
 
-export const handler = async (event) => {
+// Small helper so dynamic import works in CJS
+async function loadAgent() {
+  // Import the ESM module from your built dist/
+  return await import('../../dist/src/agents/sentinel.agent.js');
+}
+
+module.exports.handler = async (event) => {
   try {
     if (event.httpMethod === 'OPTIONS') {
       return ok({ ok: true }, 204);
     }
-
     if (event.httpMethod !== 'POST') {
       return json({ ok: false, error: 'method_not_allowed' }, 405);
     }
@@ -25,7 +29,10 @@ export const handler = async (event) => {
       sensitivity = 'high'
     } = body;
 
+    // Dynamically import the ESM agent (works fine in Netlify functions)
+    const { runTriage } = await loadAgent();
     const brief = await runTriage({ tip_text, urls, images, geo_hint, lang_hint, sensitivity });
+
     return json({ ok: true, brief });
   } catch (err) {
     console.error('[netlify:triage:error]', err);
