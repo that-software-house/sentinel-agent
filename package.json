@@ -12,7 +12,7 @@
     "build": "npm run build:clean && npm run build:copy && npm run build:esmshim",
     "build:clean": "shx rm -rf dist && shx mkdir -p dist/src dist/public",
     "build:copy": "cpx \"src/**/*\" dist/src && cpx \"public/**/*\" dist/public && cpx package.json dist && cpx .env.example dist || true",
-    "build:esmshim": "shx cp dist/src/agents/sentinel.agent.js dist/src/agents/sentinel.agent.mjs",
+    "build:esmshim": "shx test -f dist/src/agents/sentinel.agent.js && shx cp dist/src/agents/sentinel.agent.js dist/src/agents/sentinel.agent.mjs || echo 'Error: sentinel.agent.js not found in dist'",
     "start:prod": "NODE_ENV=production node dist/src/server.js",
     "start": "node server.js",
     "start:cli": "node src/cli.js",
