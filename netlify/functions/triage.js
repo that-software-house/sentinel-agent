@@ -4,8 +4,8 @@ const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 async function loadAgent() {
-  // Import the built .mjs so Node treats it as ESM even inside CJS
-  const modPath = path.resolve(__dirname, '../../dist/src/agents/sentinel.agent.mjs');
+  // Import the ESM agent from its source location
+  const modPath = path.resolve(__dirname, '../../src/agents/sentinel.agent.mjs');
   const fileUrl = pathToFileURL(modPath);
   return await import(fileUrl.href);
 }
