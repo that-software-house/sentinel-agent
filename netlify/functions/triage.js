@@ -1,13 +1,12 @@
-// CommonJS wrapper that loads your ESM agent via file URL
+// CommonJS wrapper that loads your ESM agent via file URL (.mjs)
 const { Buffer } = require('node:buffer');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 
 async function loadAgent() {
-  // Resolve the built ESM module and import it as a file:// URL
-  const modPath = path.resolve(__dirname, '../../dist/src/agents/sentinel.agent.js');
+  const modPath = path.resolve(__dirname, '../../dist/src/agents/sentinel.agent.mjs');
   const fileUrl = pathToFileURL(modPath);
-  return await import(fileUrl.href);
+  return await import(fileUrl.href); // this will be treated as ESM
 }
 
 module.exports.handler = async (event) => {
@@ -42,7 +41,7 @@ module.exports.handler = async (event) => {
   }
 };
 
-// --- helpers (CORS + JSON) ---
+// --- helpers ---
 function headers(extra = {}) {
   return {
     'Content-Type': 'application/json',
