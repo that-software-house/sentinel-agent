@@ -9,6 +9,12 @@
   },
   "scripts": {
     "dev": "nodemon --watch . --ext js,json --signal SIGTERM server.js",
+    "build": "npm run build:clean && npm run build:copy && npm run build:check",
+    "build:clean": "shx rm -rf dist && shx mkdir -p dist/src dist/public",
+    "build:copy": "cpx \"src/**/*\" dist/src && cpx \"public/**/*\" dist/public && cpx package.json dist && cpx .env.example dist || true",
+    "build:check": "node -e \"import('./src/healthcheck.js').then(m=>m.default?.()).catch(e=>{console.error(e);process.exit(1);})\"",
+
+    "start:prod": "NODE_ENV=production node dist/src/server.js",
     "start": "node server.js",
     "start:cli": "node src/cli.js",
     "check": "node -e \"import('./src/healthcheck.js').then(m=>m.default?.()).catch(e=>{console.error(e);process.exit(1);})\"",
