@@ -11,7 +11,7 @@ async function loadAgent() {
   return await import(fileUrl.href);
 }
 
-module.exports.handler = async (event) => {
+exports.handler = async (event) => {
   try {
     if (event.httpMethod === 'OPTIONS') {
       return ok({ ok: true }, 204);
