@@ -24,6 +24,7 @@
 
 # The triage function needs the transpiled agent code packaged along with it
 [functions."triage"]
+  node_bundler = "none"
   included_files = ["dist/**"]
 
 # Route all /api/* calls to the single triage function

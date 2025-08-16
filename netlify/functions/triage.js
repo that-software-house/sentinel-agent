@@ -1,10 +1,13 @@
-// netlify/functions/triage.js (CommonJS wrapper + dynamic import of ESM)
+// CommonJS wrapper that loads your ESM agent via file URL
 const { Buffer } = require('node:buffer');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
 
-// Small helper so dynamic import works in CJS
 async function loadAgent() {
-  // Import the ESM module from your built dist/
-  return await import('../../dist/src/agents/sentinel.agent.js');
+  // Resolve the built ESM module and import it as a file:// URL
+  const modPath = path.resolve(__dirname, '../../dist/src/agents/sentinel.agent.js');
+  const fileUrl = pathToFileURL(modPath);
+  return await import(fileUrl.href);
 }
 
 module.exports.handler = async (event) => {
@@ -29,7 +32,6 @@ module.exports.handler = async (event) => {
       sensitivity = 'high'
     } = body;
 
-    // Dynamically import the ESM agent (works fine in Netlify functions)
     const { runTriage } = await loadAgent();
     const brief = await runTriage({ tip_text, urls, images, geo_hint, lang_hint, sensitivity });
 
