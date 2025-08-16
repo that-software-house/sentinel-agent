@@ -4,11 +4,27 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
+    # Keep these as external so Netlify ships them from node_modules intact
+  external_node_modules = [
+      "@openai/agents",
+      "@openai/agents-openai",
+      "@openai/agents-core",
+      "sharp",
+      "tesseract.js",
+      "puppeteer",
+      "node-fetch"
+  ]
 
 [functions.environment]
 # Disable Puppeteer in serverless (use lightweight HTTP fetch fallback)
   PUPPETEER_DISABLED = "1"
   NETLIFY = "1"
+  NODE_OPTIONS = "--enable-source-maps"
+
+# The triage function needs the transpiled agent code packaged along with it
+[functions."triage"]
+  included_files = ["dist/**"]
 
 # Route all /api/* calls to the single triage function
 [[redirects]]
