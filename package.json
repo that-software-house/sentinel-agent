@@ -13,7 +13,6 @@
     "build:clean": "shx rm -rf dist && shx mkdir -p dist/src dist/public",
     "build:copy": "cpx \"src/**/*\" dist/src && cpx \"public/**/*\" dist/public && cpx package.json dist && cpx .env.example dist || true",
     "build:check": "node -e \"import('./src/healthcheck.js').then(m=>m.default?.()).catch(e=>{console.error(e);process.exit(1);})\"",
-
     "start:prod": "NODE_ENV=production node dist/src/server.js",
     "start": "node server.js",
     "start:cli": "node src/cli.js",
@@ -24,17 +23,16 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@openai/agents": "^0.0.7",
-    "@openai/agents-openai": "^0.0.7",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "@openai/agents": "^0.0.16",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "pdfkit": "^0.15.0",
+    "pdfkit": "^0.17.1",
     "puppeteer": "^24.16.2",
-    "sha.js": "^2.4.11",
+    "sha.js": "^2.4.12",
     "sharp": "^0.34.3",
-    "tesseract.js": "^5.1.0",
-    "zod": "^3.23.8"
+    "tesseract.js": "^6.0.1",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "cpx": "^1.5.0",

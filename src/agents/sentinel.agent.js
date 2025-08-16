@@ -3,14 +3,13 @@
 // Node >= 22, ESM
 
 import { Agent, Runner, run, tool } from '@openai/agents';
-import { setDefaultOpenAIKey } from '@openai/agents-openai';
 import { z as zod } from 'zod';
 
 // --- Provider config ---
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('OPENAI_API_KEY is required');
 }
-setDefaultOpenAIKey(process.env.OPENAI_API_KEY);
+
 const MODEL = process.env.OPENAI_MODEL || 'o4-mini';
 
 // --- Local tool implementations (to be created in src/tools/) ---
