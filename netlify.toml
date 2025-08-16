@@ -1,0 +1,17 @@
+[build]
+  command = "npm run build"
+  publish = "dist/public"
+
+[functions]
+  directory = "netlify/functions"
+
+[functions.environment]
+# Disable Puppeteer in serverless (use lightweight HTTP fetch fallback)
+  PUPPETEER_DISABLED = "1"
+  NETLIFY = "1"
+
+# Route all /api/* calls to the single triage function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/triage"
+  status = 200

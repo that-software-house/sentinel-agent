@@ -7,6 +7,9 @@
 // * Keep timeouts small; analysts can re-run if needed.
 
 import puppeteer from 'puppeteer';
+import nodeFetch from 'node-fetch';
+
+const DISABLE_PUPPETEER = process.env.PUPPETEER_DISABLED === '1' || process.env.NETLIFY === '1';
 
 /**
  * @typedef {Object} FetchResult
@@ -18,6 +21,32 @@ import puppeteer from 'puppeteer';
  * @property {{dataUri: string, type: string, label: string}[]} screenshots
  * @property {string[]} warnings
  */
+async function simpleFetch(url) {
+  const warnings = [];
+  try {
+    const resp = await nodeFetch(url, { redirect: 'follow' });
+    const html = await resp.text();
+    const text = html
+      .replace(/<script[^>]*>[^]*?<\/script>/gi, ' ')
+      .replace(/<style[^>]*>[^]*?<\/style>/gi, ' ')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    return {
+      finalUrl: resp.url || url,
+      status: resp.status,
+      headers: Object.fromEntries(resp.headers.entries()),
+      html,
+      text,
+      screenshots: [],
+      warnings
+    };
+  } catch (e) {
+    warnings.push(`simpleFetch error: ${e?.message || e}`);
+    return { finalUrl: url, status: 0, headers: {}, html: '', text: '', screenshots: [], warnings };
+  }
+}
 
 /**
  * Fetch and render a page with Puppeteer.
@@ -29,12 +58,16 @@ import puppeteer from 'puppeteer';
  * @returns {Promise<FetchResult>}
  */
 export async function fetchUrl({
-                                 url,
-                                 screenshot = true,
+                                 url,screenshot = true,
                                  timeoutMs = 20000,
                                  maxScreenshots = 2,
                                }) {
   validateUrl(url);
+
+  if (DISABLE_PUPPETEER) {
+    // Netlify/serverless mode: use simple HTTP fetch (no JS rendering)
+    return await simpleFetch(url);
+  }
 
   /** @type {import('puppeteer').Browser | null} */
   let browser = null;
